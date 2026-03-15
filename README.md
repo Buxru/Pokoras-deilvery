@@ -2,6 +2,8 @@
 
 A full-stack food delivery web application with a customer-facing frontend, an admin panel, and a REST API backend.
 
+> ⚠️ The `.env` file is included in this repository for demonstration purposes only. All credentials are test data and should **never** be used in production.
+
 ---
 
 ## 📁 Project Structure
