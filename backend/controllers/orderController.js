@@ -6,7 +6,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const placeOrder = async (req, res) => {
 
-    const frontend_url = "http://localhost:5173"
+    const frontend_url = "http://localhost:5174"
 
     try {
         const newOrder = new orderModel({
@@ -56,29 +56,49 @@ const placeOrder = async (req, res) => {
 }
 
 const verifyOrder = async (req, res) => {
-    const {orderId, success} = req.body;
+    const { orderId, success } = req.body;
     try {
-        if(success=="true"){
-            await orderModel.findByIdAndUpdate(orderId, {payment: true});
-            res.json({success: true, message: "Paid"});
+        if (success == "true") {
+            await orderModel.findByIdAndUpdate(orderId, { payment: true });
+            res.json({ success: true, message: "Paid" });
         } else {
             await orderModel.findByIdAndDelete(orderId);
-            res.json({success: false, message: "Not Paid"});
+            res.json({ success: false, message: "Not Paid" });
         }
     } catch (error) {
         console.log(error);
-        res.json({success: false, message: "Error with paying"})        
+        res.json({ success: false, message: "Error with paying" })
     }
 }
 
 const userOrders = async (req, res) => {
     try {
-        const orders = await orderModel.find({userId: req.body.userId});
-        res.json({success: true, data: orders})
+        const orders = await orderModel.find({ userId: req.body.userId });
+        res.json({ success: true, data: orders })
     } catch (error) {
         console.log(error);
-        res.json({success: false, message:"User Orders successfuly updated"})        
+        res.json({ success: false, message: "User Orders successfuly updated" })
     }
 }
 
-export { placeOrder, verifyOrder, userOrders };
+const listOrders = async (req, res) => {
+    try {
+        const orders = await orderModel.find({});
+        res.json({ success: true, data: orders });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: true, message: "Failed to list all the orders" })
+    }
+}
+
+const updateStatus = async (req, res) => {
+    try {
+        await orderModel.findByIdAndUpdate(req.body.orderId, {status: req.body.status});
+        res.json({success: true, message: "Status Updated"})
+    } catch (error) {
+        console.log(error);
+        res.json({success: false, message: "Error updating status"})
+    }
+}
+
+export { placeOrder, verifyOrder, userOrders, listOrders, updateStatus };
